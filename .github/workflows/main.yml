@@ -1,3 +1,4 @@
+name: Merge Log Action
 on:
   push:
     branches:
