@@ -19,15 +19,16 @@ jobs:
           python-version: '3.x'
 
       - name: Run log update script
-        run: python ${{PYTHONFILENAME}}
+        run: python "$PYTHONFILENAME"
+        env:
+          PYTHONFILENAME: ${{ vars.PYTHONFILENAME }}
 
       - name: Commit and push updated CSV
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add ${{CSVFILENAME}}
+          git add "$CSVFILENAME"
 
-          # Only commit if changes exist
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
@@ -36,3 +37,4 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSVFILENAME: ${{ vars.CSVFILENAME }}
