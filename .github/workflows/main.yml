@@ -16,7 +16,7 @@ jobs:
           python-version: '3.x'
 
       - name: Run log update script
-        run: python merge_log.py
+        run: python mergelogs.py
 
       - name: Commit and push updated CSV
         run: |
