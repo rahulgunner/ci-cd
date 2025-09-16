@@ -1,0 +1,22 @@
+name: Trigger Airflow DAG on Merge
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on merge to main
+
+jobs:
+  trigger-dag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Airflow DAG via API
+        run: |
+          curl -X POST ${{ secrets.AIRFLOW_API_URL }}/api/v1/dags/mergelog_dag/dagRuns \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Basic ${{ secrets.AIRFLOW_AUTH }}" \
+          -d '{
+                "conf": {
+                  "status": "success"
+                }
+              }'
