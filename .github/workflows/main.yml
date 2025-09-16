@@ -1,22 +1,23 @@
-name: Trigger Airflow DAG on Merge
-
-on:
-  push:
-    branches:
-      - main  # Trigger only on merge to main
-
 jobs:
-  trigger-dag:
+  log_merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger Airflow DAG via API
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run log update script
+        run: python merge_logging/update_merge_log.py
+
+      - name: Commit and push updated CSV
         run: |
-          curl -X POST ${{ secrets.AIRFLOW_API_URL }}/api/v1/dags/mergelog_dag/dagRuns \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Basic ${{ secrets.AIRFLOW_AUTH }}" \
-          -d '{
-                "conf": {
-                  "status": "success"
-                }
-              }'
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add merge_logging/merge_logs.csv
+          git commit -m "Update merge log"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
